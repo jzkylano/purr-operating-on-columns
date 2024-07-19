@@ -1,0 +1,15 @@
+# assign new df based on df
+new_table <- df %>%
+# select the columns of interest
+  select(cols) %>% 
+# pivot the columns longer 
+  pivot_longer(cols = contains("text_pattern"), values_to = "vals", names_to = "y") %>%
+# group by the previous column header
+  group_by(y) %>%
+# calculate summary values of interest, for example the count, number of affirmative cases, and percent of affirmative cases. 
+  summarise(n = n(),
+# In this case Respondents is the count of all non NA values
+            Respondents = sum(!is.na(vals)),
+            Percent = paste0(format(round(Respondents/n*100, 1), digits = 1, nsmall = 1, trim = TRUE), "%")) %>%
+# ungroup to create stacked summary values with a row for each grouping variable (i.e., previously column header)
+  ungroup()
